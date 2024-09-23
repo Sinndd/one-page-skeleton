@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Page Skeleton</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4">
+        <ul class="flex space-x-4 justify-center">
+            <li><a href="#home" class="hover:text-gray-300">Home</a></li>
+            <li><a href="#about" class="hover:text-gray-300">About</a></li>
+            <li><a href="#services" class="hover:text-gray-300">Services</a></li>
+            <li><a href="#contact" class="hover:text-gray-300">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sections -->
+    <section id="home" class="h-screen flex items-center justify-center bg-gray-100">
+        <h1 class="text-4xl font-bold">Welcome to our One Page Site</h1>
+    </section>
+
+    <section id="about" class="h-screen flex items-center justify-center bg-white">
+        <div class="max-w-3xl text-center">
+            <h2 class="text-3xl font-semibold mb-4">About Us</h2>
+            <p class="text-lg">We are a creative agency focused on delivering innovative solutions...</p>
+        </div>
+    </section>
+
+    <section id="services" class="h-screen flex items-center justify-center bg-gray-100">
+        <div class="max-w-3xl text-center">
+            <h2 class="text-3xl font-semibold mb-4">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 border rounded-md shadow-lg">
+                    <h3 class="text-xl font-bold mb-2">Web Development</h3>
+                    <p>Building responsive and modern websites using cutting-edge technologies.</p>
+                </div>
+                <div class="p-4 border rounded-md shadow-lg">
+                    <h3 class="text-xl font-bold mb-2">Design</h3>
+                    <p>Creating visually appealing designs tailored to your brand and vision.</p>
+                </div>
+                <div class="p-4 border rounded-md shadow-lg">
+                    <h3 class="text-xl font-bold mb-2">SEO Optimization</h3>
+                    <p>Optimizing your site for better visibility on search engines.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="h-screen flex items-center justify-center bg-white">
+        <div class="max-w-lg text-center">
+            <h2 class="text-3xl font-semibold mb-4">Contact Us</h2>
+            <form class="space-y-4">
+                <input type="text" placeholder="Your Name" class="w-full p-2 border border-gray-300 rounded-md" />
+                <input type="email" placeholder="Your Email" class="w-full p-2 border border-gray-300 rounded-md" />
+                <textarea placeholder="Your Message" class="w-full p-2 border border-gray-300 rounded-md" rows="4"></textarea>
+                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500">
+                    Send
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white text-center p-4">
+        <p>&copy; 2024 One Page Skeleton. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+
+
+{% endblock %}
