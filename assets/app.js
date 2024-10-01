@@ -6,13 +6,13 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
+import './styles/app_styles.css';
 
 // Import Vue (Vue 3)
 import { createApp } from 'vue';
 
 // Import your component
-import Example from '../public/assets/components/Example.vue';
+// import Example from '../public/assets/components/Example.vue';
 
 /**
 * Create a fresh Vue 3 Application instance
@@ -20,7 +20,7 @@ import Example from '../public/assets/components/Example.vue';
 const app = createApp({});
 
 // Register your component
-app.component('Example', Example);
+// app.component('Example', Example);
 
 // Mount the app to the DOM element with the ID 'app'
 app.mount('#app');
