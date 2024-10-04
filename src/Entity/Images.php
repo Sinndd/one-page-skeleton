@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\ImagesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Produits;
+use App\Entity\ProduitImages;
 
 #[ORM\Entity(repositoryClass: ImagesRepository::class)]
 class Images
@@ -13,40 +16,46 @@ class Images
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $produit_id = null;
+    #[ORM\ManyToOne(targetEntity: Produits::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Produits $produit = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url_image = null;
+    private ?string $urlImage = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
+
+    // Ajout de la propriété produitImages
+    #[ORM\ManyToOne(targetEntity: ProduitImages::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ProduitImages $produitImages = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getProduitId(): ?int
+    public function getProduit(): ?Produits
     {
-        return $this->produit_id;
+        return $this->produit;
     }
 
-    public function setProduitId(int $produit_id): static
+    public function setProduit(?Produits $produit): static
     {
-        $this->produit_id = $produit_id;
+        $this->produit = $produit;
 
         return $this;
     }
 
     public function getUrlImage(): ?string
     {
-        return $this->url_image;
+        return $this->urlImage;
     }
 
-    public function setUrlImage(string $url_image): static
+    public function setUrlImage(string $urlImage): static
     {
-        $this->url_image = $url_image;
+        $this->urlImage = $urlImage;
 
         return $this;
     }
@@ -59,6 +68,20 @@ class Images
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    // Méthode pour obtenir l'objet ProduitImages associé
+    public function getProduitImages(): ?ProduitImages
+    {
+        return $this->produitImages;
+    }
+
+    // Méthode pour définir l'objet ProduitImages associé
+    public function setProduitImages(?ProduitImages $produitImages): static
+    {
+        $this->produitImages = $produitImages;
 
         return $this;
     }

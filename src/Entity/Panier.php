@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PanierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,38 +16,76 @@ class Panier
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $client_id = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateurs::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateurs $utilisateur = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_creation = null;
+    private ?\DateTimeInterface $dateCreation = null;
+
+    #[ORM\OneToMany(mappedBy: 'panier', targetEntity: LignesCommandes::class, cascade: ['persist', 'remove'])]
+    private Collection $lignesCommandes;
+
+    public function __construct()
+    {
+        $this->lignesCommandes = new ArrayCollection();
+        $this->dateCreation = new \DateTime();
+    }
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getClientId(): ?int
+    public function getUtilisateur(): ?Utilisateurs
     {
-        return $this->client_id;
+        return $this->utilisateur;
     }
 
-    public function setClientId(int $client_id): static
+    public function setUtilisateur(?Utilisateurs $utilisateur): static
     {
-        $this->client_id = $client_id;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
 
     public function getDateCreation(): ?\DateTimeInterface
     {
-        return $this->date_creation;
+        return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTimeInterface $date_creation): static
+    public function setDateCreation(\DateTimeInterface $dateCreation): static
     {
-        $this->date_creation = $date_creation;
+        $this->dateCreation = $dateCreation;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LignesCommandes>
+     */
+    public function getLignesCommandes(): Collection
+    {
+        return $this->lignesCommandes;
+    }
+
+    public function addLigneCommande(LignesCommandes $ligneCommande): static
+    {
+        if (!$this->lignesCommandes->contains($ligneCommande)) {
+            $this->lignesCommandes->add($ligneCommande);
+            $ligneCommande->setPanier($this);
+        }
+        return $this;
+    }
+
+    public function removeLigneCommande(LignesCommandes $ligneCommande): static
+    {
+        if ($this->lignesCommandes->removeElement($ligneCommande)) {
+            if ($ligneCommande->getPanier() === $this) {
+                $ligneCommande->setPanier(null);
+            }
+        }
         return $this;
     }
 }

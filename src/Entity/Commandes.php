@@ -4,7 +4,11 @@ namespace App\Entity;
 
 use App\Repository\CommandesRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Utilisateurs;
+use App\Entity\Produits;
 
 #[ORM\Entity(repositoryClass: CommandesRepository::class)]
 class Commandes
@@ -14,8 +18,9 @@ class Commandes
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $client_id = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateurs::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateurs $client = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $total = null;
@@ -32,19 +37,30 @@ class Commandes
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $methode_paiement = null;
 
+    #[ORM\ManyToMany(targetEntity: Produits::class)]
+    #[ORM\JoinTable(name: "commande_produit")]
+    private Collection $produits;
+
+    public function __construct()
+    {
+        $this->produits = new ArrayCollection();
+    }
+
+    // Getters and setters...
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getClientId(): ?int
+    public function getClient(): ?Utilisateurs
     {
-        return $this->client_id;
+        return $this->client;
     }
 
-    public function setClientId(int $client_id): static
+    public function setClient(Utilisateurs $client): static
     {
-        $this->client_id = $client_id;
+        $this->client = $client;
 
         return $this;
     }
@@ -105,6 +121,30 @@ class Commandes
     public function setMethodePaiement(?string $methode_paiement): static
     {
         $this->methode_paiement = $methode_paiement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Produits>
+     */
+    public function getProduits(): Collection
+    {
+        return $this->produits;
+    }
+
+    public function addProduit(Produits $produit): static
+    {
+        if (!$this->produits->contains($produit)) {
+            $this->produits->add($produit);
+        }
+
+        return $this;
+    }
+
+    public function removeProduit(Produits $produit): static
+    {
+        $this->produits->removeElement($produit);
 
         return $this;
     }

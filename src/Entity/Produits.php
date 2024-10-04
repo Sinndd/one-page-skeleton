@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\ProduitsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Categories;
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 class Produits
@@ -30,30 +33,34 @@ class Produits
     private ?string $taille = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_ajout = null;
+    private ?\DateTimeInterface $dateAjout = null;
 
-    #[ORM\Column]
-    private ?int $categorie_id = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $artiste_id = null;
+    #[ORM\ManyToOne(targetEntity: Categories::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Categories $categorie = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image_principale = null;
+    private ?string $imagePrincipale = null;
 
     #[ORM\Column]
-    private ?bool $en_promotion = null;
+    private ?bool $enPromotion = null;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: ProduitImages::class, cascade: ['persist', 'remove'])]
+    private Collection $produitImages;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: ProduitPromotions::class, cascade: ['persist', 'remove'])]
+    private Collection $produitPromotions;
+
+    public function __construct()
+    {
+        $this->produitImages = new ArrayCollection();
+        $this->produitPromotions = new ArrayCollection();
+        $this->dateAjout = new \DateTime();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getNom(): ?string
@@ -118,61 +125,53 @@ class Produits
 
     public function getDateAjout(): ?\DateTimeInterface
     {
-        return $this->date_ajout;
+        return $this->dateAjout;
     }
 
-    public function setDateAjout(\DateTimeInterface $date_ajout): static
+    public function getCategorie(): ?Categories
     {
-        $this->date_ajout = $date_ajout;
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categories $categorie): static
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }
 
-    public function getCategorieId(): ?int
+    public function setImagePrincipale(?string $imagePrincipale): static
     {
-        return $this->categorie_id;
-    }
-
-    public function setCategorieId(int $categorie_id): static
-    {
-        $this->categorie_id = $categorie_id;
-
-        return $this;
-    }
-
-    public function getArtisteId(): ?int
-    {
-        return $this->artiste_id;
-    }
-
-    public function setArtisteId(?int $artiste_id): static
-    {
-        $this->artiste_id = $artiste_id;
-
-        return $this;
-    }
-
-    public function getImagePrincipale(): ?string
-    {
-        return $this->image_principale;
-    }
-
-    public function setImagePrincipale(?string $image_principale): static
-    {
-        $this->image_principale = $image_principale;
+        $this->imagePrincipale = $imagePrincipale;
 
         return $this;
     }
 
     public function isEnPromotion(): ?bool
     {
-        return $this->en_promotion;
+        return $this->enPromotion;
     }
 
-    public function setEnPromotion(bool $en_promotion): static
+    public function setEnPromotion(bool $enPromotion): static
     {
-        $this->en_promotion = $en_promotion;
+        $this->enPromotion = $enPromotion;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ProduitImages>
+     */
+    public function getProduitImages(): Collection
+    {
+        return $this->produitImages;
+    }
+
+    /**
+     * @return Collection<int, ProduitPromotions>
+     */
+    public function getProduitPromotions(): Collection
+    {
+        return $this->produitPromotions;
     }
 }

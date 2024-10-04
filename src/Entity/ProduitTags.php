@@ -13,37 +13,39 @@ class ProduitTags
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $produit_id = null;
+    #[ORM\ManyToOne(targetEntity: Produits::class, inversedBy: 'produitTags')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Produits $produit = null;
 
-    #[ORM\Column]
-    private ?int $tag_id = null;
+    #[ORM\ManyToOne(targetEntity: Tags::class, inversedBy: 'produitTags')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tags $tag = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getProduitId(): ?int
+    public function getProduit(): ?Produits
     {
-        return $this->produit_id;
+        return $this->produit;
     }
 
-    public function setProduitId(int $produit_id): static
+    public function setProduit(?Produits $produit): static
     {
-        $this->produit_id = $produit_id;
+        $this->produit = $produit;
 
         return $this;
     }
 
-    public function getTagId(): ?int
+    public function getTag(): ?Tags
     {
-        return $this->tag_id;
+        return $this->tag;
     }
 
-    public function setTagId(int $tag_id): static
+    public function setTag(?Tags $tag): static
     {
-        $this->tag_id = $tag_id;
+        $this->tag = $tag;
 
         return $this;
     }

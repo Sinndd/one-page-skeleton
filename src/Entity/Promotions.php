@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\PromotionsRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PromotionsRepository::class)]
@@ -14,17 +15,25 @@ class Promotions
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
-    private ?string $reduction = null;
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+    private ?float $reduction = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_debut = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $dateDebut = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_fin = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $dateFin = null;
+
+    #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: ProduitPromotions::class, cascade: ['persist', 'remove'])]
+    private Collection $produitPromotions;
+
+    public function __construct()
+    {
+        $this->produitPromotions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -43,12 +52,12 @@ class Promotions
         return $this;
     }
 
-    public function getReduction(): ?string
+    public function getReduction(): ?float
     {
         return $this->reduction;
     }
 
-    public function setReduction(string $reduction): static
+    public function setReduction(float $reduction): static
     {
         $this->reduction = $reduction;
 
@@ -57,24 +66,54 @@ class Promotions
 
     public function getDateDebut(): ?\DateTimeInterface
     {
-        return $this->date_debut;
+        return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $date_debut): static
+    public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
-        $this->date_debut = $date_debut;
+        $this->dateDebut = $dateDebut;
 
         return $this;
     }
 
     public function getDateFin(): ?\DateTimeInterface
     {
-        return $this->date_fin;
+        return $this->dateFin;
     }
 
-    public function setDateFin(\DateTimeInterface $date_fin): static
+    public function setDateFin(\DateTimeInterface $dateFin): static
     {
-        $this->date_fin = $date_fin;
+        $this->dateFin = $dateFin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProduitPromotions>
+     */
+    public function getProduitPromotions(): Collection
+    {
+        return $this->produitPromotions;
+    }
+
+    public function addProduitPromotion(ProduitPromotions $produitPromotion): static
+    {
+        if (!$this->produitPromotions->contains($produitPromotion)) {
+            $this->produitPromotions->add($produitPromotion);
+            $produitPromotion->setPromotion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduitPromotion(ProduitPromotions $produitPromotion): static
+    {
+        if ($this->produitPromotions->removeElement($produitPromotion)) {
+            // set the owning side to null (unless already changed)
+            if ($produitPromotion->getPromotion() === $this) {
+                $produitPromotion->setPromotion(null);
+            }
+        }
 
         return $this;
     }

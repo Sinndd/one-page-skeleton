@@ -13,11 +13,13 @@ class PanierProduits
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $panier_id = null;
+    #[ORM\ManyToOne(targetEntity: Panier::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Panier $panier = null;
 
-    #[ORM\Column]
-    private ?int $produit_id = null;
+    #[ORM\ManyToOne(targetEntity: Produits::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Produits $produit = null;
 
     #[ORM\Column]
     private ?int $quantite = null;
@@ -27,26 +29,26 @@ class PanierProduits
         return $this->id;
     }
 
-    public function getPanierId(): ?int
+    public function getPanier(): ?Panier
     {
-        return $this->panier_id;
+        return $this->panier;
     }
 
-    public function setPanierId(int $panier_id): static
+    public function setPanier(?Panier $panier): static
     {
-        $this->panier_id = $panier_id;
+        $this->panier = $panier;
 
         return $this;
     }
 
-    public function getProduitId(): ?int
+    public function getProduit(): ?Produits
     {
-        return $this->produit_id;
+        return $this->produit;
     }
 
-    public function setProduitId(int $produit_id): static
+    public function setProduit(?Produits $produit): static
     {
-        $this->produit_id = $produit_id;
+        $this->produit = $produit;
 
         return $this;
     }
@@ -60,6 +62,12 @@ class PanierProduits
     {
         $this->quantite = $quantite;
 
+        return $this;
+    }
+
+    public function modifyQuantite(int $quantite): static
+    {
+        $this->quantite += $quantite;
         return $this;
     }
 }
