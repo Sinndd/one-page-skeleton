@@ -21,7 +21,7 @@ class Categories
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Produits::class)]
+    #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Produits::class, cascade: ['remove'])]
     private Collection $produits;
 
     public function __construct()

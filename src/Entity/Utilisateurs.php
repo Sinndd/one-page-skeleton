@@ -2,125 +2,123 @@
 
 namespace App\Entity;
 
-use App\Repository\UtilisateursRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UtilisateursRepository::class)]
-class Utilisateurs
+#[ORM\Entity]
+#[ORM\Table(name: 'utilisateurs')]
+class Utilisateurs implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nom = null;
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
 
-    #[ORM\Column(length: 255)]
-    private ?string $mot_de_passe = null;
+    #[ORM\Column(type: 'string')]
+    private ?string $password = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $adresse = null;
+    // Ajoutez ici d'autres propriétés pertinentes de l'utilisateur, comme l'email, le prénom, etc.
 
-    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
-    private ?\DateTimeInterface $date_inscription = null;
-
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $telephone = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $role = null;
-
+    /**
+     * Récupère l'identifiant unique de l'utilisateur.
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    /**
+     * Récupère le nom d'utilisateur ou l'identifiant unique de l'utilisateur.
+     * Ceci remplace la méthode `getUsername()`.
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->nom;
+        return $this->username ?? '';
     }
 
-    public function setNom(string $nom): static
+    /**
+     * Récupère le nom d'utilisateur (ancienne méthode).
+     * Cette méthode est encore supportée, mais `getUserIdentifier()` est préférée.
+     */
+    public function getUsername(): string
     {
-        $this->nom = $nom;
+        return $this->getUserIdentifier();
+    }
+
+    /**
+     * Définit le nom d'utilisateur.
+     */
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }
 
-    public function getEmail(): ?string
+    /**
+     * Récupère un tableau des rôles assignés à l'utilisateur.
+     */
+    public function getRoles(): array
     {
-        return $this->email;
+        // Garantir que chaque utilisateur a toujours au moins le rôle ROLE_USER.
+        $roles = $this->roles;
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+
+        return $roles;
     }
 
-    public function setEmail(string $email): static
+    /**
+     * Définit les rôles de l'utilisateur.
+     */
+    public function setRoles(array $roles): self
     {
-        $this->email = $email;
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function getMotDePasse(): ?string
+    /**
+     * Récupère le mot de passe haché de l'utilisateur.
+     */
+    public function getPassword(): ?string
     {
-        return $this->mot_de_passe;
+        return $this->password;
     }
 
-    public function setMotDePasse(string $mot_de_passe): static
+    /**
+     * Définit le mot de passe haché de l'utilisateur.
+     */
+    public function setpassword(?string $password): self
     {
-        $this->mot_de_passe = $mot_de_passe;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function getAdresse(): ?string
+    /**
+     * Supprime les données sensibles de l'utilisateur.
+     */
+    public function eraseCredentials(): void
     {
-        return $this->adresse;
+        // Si vous avez des données temporaires sensibles sur l'utilisateur, effacez-les ici
+        // $this->plainPassword = null;
     }
 
-    public function setAdresse(?string $adresse): static
+    /**
+     * Récupère le sel utilisé pour le hachage des mots de passe.
+     * Vous n'avez pas besoin de définir un sel si vous utilisez bcrypt ou argon2i.
+     */
+    public function getSalt(): ?string
     {
-        $this->adresse = $adresse;
-
-        return $this;
-    }
-
-    public function getDateInscription(): ?\DateTimeInterface
-    {
-        return $this->date_inscription;
-    }
-
-    public function setDateInscription(\DateTimeInterface $date_inscription): static
-    {
-        $this->date_inscription = $date_inscription;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): static
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(string $role): static
-    {
-        $this->role = $role;
-
-        return $this;
+        return null;
     }
 }

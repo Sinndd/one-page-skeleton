@@ -47,10 +47,10 @@ class ProduitPromotions
         return $this->promotion;
     }
 
-    public function setPromotion(Promotions $promotion): static
+    public function setPromotion(?Promotions $promotion): static
     {
         $this->promotion = $promotion;
-
+    
         return $this;
     }
 }
